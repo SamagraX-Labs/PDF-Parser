@@ -1,0 +1,13 @@
+pdf2image
+opencv-python
+matplotlib
+Pillow
+torch
+
+torchvision
+tqdm
+pandas
+ipython
+celery
+fastapi
+pymupdf
