@@ -1,4 +1,4 @@
-from text_extraction import process_pdfs_in_directory
+from app.tasks.text_extraction import process_pdfs_in_directory
 
 def main():
     process_pdfs_in_directory()

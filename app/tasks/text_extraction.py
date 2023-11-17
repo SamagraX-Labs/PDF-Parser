@@ -4,7 +4,6 @@ import pandas as pd
 
 def check_underline(underline, bbox):
     items = underline.get("items", [])
-
     left, top, right, bottom = items[0][1]
 
     # checks if there is sufficient overlap between the underline and the box
@@ -53,45 +52,33 @@ def extract_text_with_styles(paths,page):
 
     return text_with_styles
 
-def draw_rectangles(page, text_with_styles):
-    for style_info in text_with_styles:
-        bbox = style_info["bbox"]
-        page.draw_rect(bbox, color=(1, 0, 0), width=2)
+def draw_underlines(original_doc,paths,page,page_num):
 
+    output_path = f"underlined_pages/underline_page_{page_num}.pdf"
+    path_rects = [fitz.Rect(path["rect"]) for path in paths]
+
+    for path_rect in path_rects:
+        page.draw_rect(path_rect, color=(1, 0, 0), width=2)
+    
+    new_doc = fitz.open()
+    new_doc.insert_pdf(original_doc, from_page=page_num, to_page=page_num)
+    new_doc.save(output_path)
+    new_doc.close()
 
 def find_basic_text(file_path):
 
     doc = fitz.open(file_path)
-
-    # Extract text and styles again with the corrected code
     text_with_styles_per_page = []
-    # Iterate through each page
 
     for page_num in range(len(doc)):
         page = doc[page_num]
-        output_path = f"underlined_pages/underline_page_{page_num}.pdf"
 
         #find all the underlines in a page
         paths = page.get_drawings()
-        path_rects = [fitz.Rect(path["rect"]) for path in paths]
+        draw_underlines(doc,paths,page,page_num)
 
-        for path_rect in path_rects:
-            page.draw_rect(path_rect, color=(1, 0, 0), width=2)
-        
-        new_doc = fitz.open()
-        new_doc.insert_pdf(doc, from_page=page_num, to_page=page_num)
-        new_doc.save(output_path)
-        new_doc.close()
-        
         text_with_styles = extract_text_with_styles(paths,page)
         
-        # Save the page with the rectangles and the underlines both
-        # draw_rectangles(page, text_with_styles)
-
-        # new_doc = fitz.open()
-        # new_doc.insert_pdf(doc, from_page=page_num, to_page=page_num)
-        # new_doc.save(f"full_page_{page_num}.pdf")
-        # new_doc.close()
         text_with_styles_per_page.append(pd.DataFrame(text_with_styles))
 
     doc.close()
@@ -110,14 +97,11 @@ def process_pdfs_in_directory():
         # find_basic_text(pdf_name)
         pdf_core = pd.concat([pdf_core, find_basic_text(pdf_name)], ignore_index=True)
 
-    
-    print(pdf_core)
-
     return pdf_core
 
 
 def main():
-    process_pdfs_in_directory()
+    print (process_pdfs_in_directory())
 
 if __name__ == "__main__":
     main()
