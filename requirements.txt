@@ -1,0 +1,6 @@
+Pillow
+torch
+pandas
+celery
+fastapi
+pymupdf
