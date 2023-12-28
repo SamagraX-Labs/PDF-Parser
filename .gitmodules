@@ -1,0 +1,6 @@
+[submodule "src/marker_english"]
+	path = src/marker_english
+	url = https://github.com/VikParuchuri/marker.git
+[submodule "src/marker_hindi"]
+	path = src/marker_hindi
+	url = https://github.com/GautamR-Samagra/marker.git
